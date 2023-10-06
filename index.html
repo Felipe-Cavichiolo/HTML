@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        div {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .formulario {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+            padding: 16px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li span {
+            color: #666;
+            /* Cor cinza para o texto das tarefas */
+        }
+
+        .delete {
+            background-color: #ff3030;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .delete:hover {
+            background-color: #d62727;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>Lista de Tarefas</h1>
+        <div class="formulario">
+            <input type="text" name="nome_tarefa" id="nome_tarefa_in" placeholder="Digite a Tarefa">
+            <button id="add_tarefa">Enviar</button>
+        </div>
+
+        <ul id="ul_tarefas">
+
+        </ul>
+        <button id="limpar">Limpar Tarefas</button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputTarefa = document.getElementById("nome_tarefa_in");
+            const add_tarefa = document.getElementById("add_tarefa");
+            const lista_tarefas = document.getElementById("ul_tarefas");
+            const limpa_tarefas = document.getElementById("limpar");
+
+            add_tarefa.addEventListener("click", function () {
+                txt_tarefa = inputTarefa.value.trim();
+                if (txt_tarefa !== "") {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <span>${txt_tarefa}</span>
+                        <button class="delete">Excluir</button>
+                    `;
+                    lista_tarefas.appendChild(li);
+                    inputTarefa.value = "";
+                }
+            });
+
+            lista_tarefas.addEventListener("click", function (e) {
+                if (e.target.classList.contains("delete")) {
+                    e.target.parentElement.remove();
+                };
+            });
+
+            limpa_tarefas.addEventListener("click", function () {
+                lista_tarefas.innerHTML = "";
+            });
+        });
+    </script>
+</body>
+
+</html>
