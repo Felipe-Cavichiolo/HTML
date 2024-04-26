@@ -29,6 +29,10 @@
             margin-bottom: 20px;
         }
 
+        span {
+            color: #666;
+        }
+
         .formulario {
             display: flex;
             align-items: center;
@@ -42,6 +46,7 @@
             border: 2px solid #ccc;
             border-radius: 8px;
             font-size: 18px;
+            margin-right: 10px;
         }
 
         button {
@@ -77,7 +82,6 @@
 
         li span {
             color: #666;
-            /* Cor cinza para o texto das tarefas */
         }
 
         .delete {
@@ -91,8 +95,50 @@
             transition: background-color 0.2s;
         }
 
+        .check {
+            margin-left: 50%;
+            background-color: green;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .check:hover {
+            background-color: darkgreen;
+            color: #fff;
+        }
+
         .delete:hover {
             background-color: #d62727;
+        }
+
+        .checked {
+            font-style: italic;
+            color: #d62727;
+            text-decoration: line-through;
+        }
+
+        .botoes_limpar {
+            padding: 16px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: min-content;
+            text-align: center;
+            align-items: center;
+        }
+
+        .limpar_concluidas,
+        .limpar {
+            margin: 5px;
+        }
+
+        .confirmar_apagar {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -108,14 +154,19 @@
         <ul id="ul_tarefas">
 
         </ul>
-        <button id="limpar">Limpar Tarefas</button>
+        <div id="botoes_limpar" class="botoes_limpar">
+            <button id="limpar_concluidas" class="limpar_concluidas">Limpar Concluídas</button>
+            <button id="limpar" class="limpar">Limpar Tarefas</button>
+        </div>
     </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const inputTarefa = document.getElementById("nome_tarefa_in");
             const add_tarefa = document.getElementById("add_tarefa");
             const lista_tarefas = document.getElementById("ul_tarefas");
             const limpa_tarefas = document.getElementById("limpar");
+            const limpa_concluidas = document.getElementById("limpar_concluidas");
 
             add_tarefa.addEventListener("click", function () {
                 txt_tarefa = inputTarefa.value.trim();
@@ -123,6 +174,7 @@
                     const li = document.createElement("li");
                     li.innerHTML = `
                         <span>${txt_tarefa}</span>
+                        <button class="check">Feito!</button>
                         <button class="delete">Excluir</button>
                     `;
                     lista_tarefas.appendChild(li);
@@ -133,11 +185,68 @@
             lista_tarefas.addEventListener("click", function (e) {
                 if (e.target.classList.contains("delete")) {
                     e.target.parentElement.remove();
+                } else if (e.target.classList.contains("check")) {
+                    const span = e.target.parentElement.querySelector("span");
+                    span.classList.toggle("checked");
+                    if (e.target.textContent === "Feito!") {
+                        e.target.textContent = "Desfazer";
+                    } else {
+                        e.target.textContent = "Feito!";
+                    }
                 };
             });
 
             limpa_tarefas.addEventListener("click", function () {
-                lista_tarefas.innerHTML = "";
+                let confirmar_botoes = document.querySelectorAll(".confirmar_apagar");
+                if (confirmar_botoes.length === 0) {
+                    const confirmar = document.createElement("div")
+                    confirmar.innerHTML = `
+                    <span>Limpar Todas as Tarefas?</span>
+                    <button id="confirmar_apagar" class="confirmar_apagar">Tem Certeza?</button>
+                    <button id="cancelar_apagar" class="cancelar_apagar" style="background-color: red; margin-top: 5px;">Cancelar</button>
+                `;
+                    document.querySelector(".botoes_limpar").appendChild(confirmar);
+
+                    const confirmar_apagar_btn = document.getElementById("confirmar_apagar");
+                    const cancelar_apagar_btn = document.getElementById("cancelar_apagar");
+
+                    confirmar_apagar_btn.addEventListener("click", function () {
+                        lista_tarefas.innerHTML = "";
+                        confirmar.remove();
+                    });
+                    cancelar_apagar_btn.addEventListener("click", function () {
+                        confirmar.remove();
+                    });
+                };
+            });
+
+            limpa_concluidas.addEventListener("click", function () {
+                let confirmar_botoes = document.querySelectorAll(".confirmar_apagar");
+                if (confirmar_botoes.length === 0) {
+                    const concluidas = lista_tarefas.querySelectorAll("li");
+                    const confirmar = document.createElement("div")
+                    confirmar.innerHTML = `
+                    <span>Limpar as Tarefas Concluidas?</span>
+                    <button id="confirmar_apagar" class="confirmar_apagar">Tem Certeza?</button>
+                    <button id="cancelar_apagar" class="cancelar_apagar" style="background-color: red; margin-top: 5px;">Cancelar</button>
+                `;
+                    document.querySelector(".botoes_limpar").appendChild(confirmar);
+                    const confirmar_apagar_btn = document.getElementById("confirmar_apagar");
+                    const cancelar_apagar_btn = document.getElementById("cancelar_apagar");
+
+                    confirmar_apagar_btn.addEventListener("click", function () {
+                        concluidas.forEach(function (tarefa) {
+                            const span = tarefa.querySelector("span");
+                            if (span.classList.contains("checked")) {
+                                tarefa.remove();
+                            };
+                        });
+                        confirmar.remove();
+                    });
+                    cancelar_apagar_btn.addEventListener("click", function () {
+                        confirmar.remove();
+                    });
+                };
             });
         });
     </script>
